@@ -5,16 +5,22 @@ async function request(path, token, options = {}) {
   if (!response.ok) throw new Error(result.error || 'Không thể xử lý đơn hàng.')
   return result
 }
-export async function createOrder(payload) {
+const attemptKey = 'fourthfish-checkout-attempt'
+function readCheckoutAttempt() {
+  try { return JSON.parse(sessionStorage.getItem(attemptKey)) } catch { return null }
+}
+export function clearCheckoutAttempt(token) {
+  if (readCheckoutAttempt()?.token === token) sessionStorage.removeItem(attemptKey)
+}
+export async function createOrder(payload, cartItems) {
   const fingerprint = JSON.stringify(payload)
-  let attempt
-  try { attempt = JSON.parse(sessionStorage.getItem('fourthfish-checkout-attempt')) } catch { /* New attempt. */ }
+  let attempt = readCheckoutAttempt()
   if (!attempt || attempt.fingerprint !== fingerprint) {
-    attempt = { fingerprint, token: crypto.randomUUID() }
-    sessionStorage.setItem('fourthfish-checkout-attempt', JSON.stringify(attempt))
+    attempt = { fingerprint, token: crypto.randomUUID(), cartItems }
+    sessionStorage.setItem(attemptKey, JSON.stringify(attempt))
   }
   const result = await request('/api/orders', attempt.token, { method: 'POST', body: JSON.stringify(payload) })
-  const saved = { ...result, token: attempt.token }
+  const saved = { ...result, token: attempt.token, cartItems: attempt.cartItems ?? cartItems }
   sessionStorage.setItem('fourthfish-last-order', JSON.stringify(saved))
   return saved
 }

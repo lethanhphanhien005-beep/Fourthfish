@@ -6,6 +6,8 @@ import HomePage from '../pages/HomePage.jsx'
 import CartPage from '../pages/CartPage.jsx'
 import CheckoutPage from '../pages/CheckoutPage.jsx'
 import OrderSuccessPage from '../pages/OrderSuccessPage.jsx'
+import CatalogPage from '../pages/CatalogPage.jsx'
+import SportPage from '../pages/SportPage.jsx'
 import ProductPage, { NotFoundPage } from '../pages/ProductPage.jsx'
 
 function ScrollToTop() {
@@ -29,6 +31,8 @@ export default function App() {
       <Routes>
         <Route element={<StoreLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/san-pham" element={<CatalogPage />} />
+          <Route path="/mon-the-thao/:id" element={<SportPage />} />
           <Route path="/san-pham/:id" element={<ProductPage />} />
           <Route path="/gio-hang" element={<CartPage />} />
           <Route path="/thanh-toan" element={<CheckoutPage />} />

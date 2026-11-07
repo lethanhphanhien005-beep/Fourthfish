@@ -389,7 +389,7 @@ body { min-width: 320px; }
 .hero-content h1, .manifesto h2, .section-heading h2, .page-title-row h1, .empty-state h1, .success-page h1 { line-height: 1.15; letter-spacing: -.043em; }
 .hero-content h1 { font-size: clamp(38px, 6.2vw, 94px); }
 .hero-content h1 > span, .hero-content h1 > em { display: block; }
-.hero-content h1 em { font-weight: 500; }
+.hero-content h1 em { font-weight: inherit; }
 .hero-copy { max-width: 440px; color: #f2f2f2; font-size: 14px; }
 .sport-label h3 { line-height: 1.18; letter-spacing: -.035em; }
 .hero-actions { flex-wrap: wrap; }

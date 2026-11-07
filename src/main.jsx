@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router'
 import App from './app/App.jsx'
 import '@fontsource-variable/inter'
 import './styles/global.css'
+import './styles/commerce.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

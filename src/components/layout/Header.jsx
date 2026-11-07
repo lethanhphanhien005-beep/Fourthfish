@@ -15,13 +15,13 @@ export default function Header() {
           <Link to="/" className="wordmark" aria-label="Fourthfish trang chủ">FOURTH<span>FISH</span><i>®</i></Link>
           <nav className="desktop-nav" aria-label="Điều hướng chính">
             <NavLink to="/">MỚI NHẤT</NavLink>
-            <Link to="/#featured">SẢN PHẨM</Link><Link to="/#sports">MÔN THỂ THAO</Link>
+            <Link to="/san-pham">SẢN PHẨM</Link><Link to="/#sports">MÔN THỂ THAO</Link>
           </nav>
           <div className="header-actions">
             <Link to="/gio-hang" className="icon-button bag-button" aria-label={`Giỏ hàng, ${count} sản phẩm`}><ShoppingBag size={20} /><span className="bag-label">GIỎ HÀNG</span><span className="bag-count">{count}</span></Link>
           </div>
         </div>
-        {menuOpen && <nav className="mobile-nav"><Link to="/#featured" onClick={() => setMenuOpen(false)}>Mua sắm sản phẩm</Link><Link to="/#sports" onClick={() => setMenuOpen(false)}>Môn thể thao</Link><Link to="/gio-hang" onClick={() => setMenuOpen(false)}>Giỏ hàng ({count})</Link></nav>}
+        {menuOpen && <nav className="mobile-nav"><Link to="/san-pham" onClick={() => setMenuOpen(false)}>Mua sắm sản phẩm</Link><Link to="/#sports" onClick={() => setMenuOpen(false)}>Môn thể thao</Link><Link to="/gio-hang" onClick={() => setMenuOpen(false)}>Giỏ hàng ({count})</Link></nav>}
       </header>
     </>
   )

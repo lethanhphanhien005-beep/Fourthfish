@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 import { ArrowRight, Check, RefreshCw } from 'lucide-react'
 import { Link } from 'react-router'
 import { formatPrice } from '../features/products/productData.js'
-import { createPayment, getOrder, readOrder } from '../services/orderService.js'
+import { clearCheckoutAttempt, createPayment, getOrder, readOrder } from '../services/orderService.js'
 import { useStore } from '../features/cart/CartContext.jsx'
 
 export default function OrderSuccessPage() {
@@ -12,8 +12,7 @@ export default function OrderSuccessPage() {
   const [error, setError] = useState('')
   const [qr, setQr] = useState('')
   const [retry, setRetry] = useState(0)
-  const cleared = useRef(false)
-  const { clearCart } = useStore()
+  const { completeCartOrder } = useStore()
   useEffect(() => {
     if (!saved?.token) return
     let active = true
@@ -32,12 +31,11 @@ export default function OrderSuccessPage() {
     return () => { active = false; clearTimeout(timer) }
   }, [saved, retry])
   useEffect(() => {
-    if (order?.status === 'paid' && !cleared.current) {
-      cleared.current = true
-      clearCart()
-      sessionStorage.removeItem('fourthfish-checkout-attempt')
+    if (order?.status === 'paid' || order?.status === 'confirmed') {
+      completeCartOrder(order.code, saved.cartItems)
+      clearCheckoutAttempt(saved.token)
     }
-  }, [order?.status, clearCart])
+  }, [order?.code, order?.status, saved, completeCartOrder])
   useEffect(() => {
     let active = true
     setQr('')

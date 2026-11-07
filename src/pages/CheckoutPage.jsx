@@ -1,16 +1,25 @@
 import { useRef, useState } from 'react'
-import { createOrder } from '../services/orderService.js'
-import { ArrowLeft, ArrowRight, PackageCheck } from 'lucide-react'
-import { Link, useNavigate } from 'react-router'
+import { ArrowLeft, ArrowRight, Mail, PackageCheck } from 'lucide-react'
+import { Link, useNavigate, useSearchParams } from 'react-router'
+import { clearCheckoutAttempt, createOrder } from '../services/orderService.js'
 import CartItem from '../components/cart/CartItem.jsx'
 import { AddressSection, PaymentOptions, ShippingOptions } from '../components/checkout/CheckoutSections.jsx'
 import { useStore } from '../features/cart/CartContext.jsx'
-import { formatPrice } from '../features/products/productData.js'
+import { cartItemKey, EXPRESS_FEE, itemCount, itemsSubtotal, standardShippingFee } from '../features/cart/cartPricing.js'
+import { formatPrice, products, productSizes } from '../features/products/productData.js'
 
 const initialAddress = { fullName: '', phone: '', city: '', district: '', ward: '', street: '', note: '', isDefault: false, isPickupAddress: false, isReturnAddress: false, type: 'Nhà riêng' }
 
 export default function CheckoutPage() {
-  const { items, subtotal, setQuantity, removeItem, clearCart } = useStore()
+  const { items: cart, setQuantity, completeCartOrder } = useStore()
+  const [params] = useSearchParams()
+  const directPurchase = params.has('mua')
+  const product = products.find(item => item.id === params.get('mua'))
+  const size = params.get('size')
+  const directItem = product && productSizes.includes(size) ? [{ ...product, size, quantity: 1 }] : []
+  const items = directPurchase ? directItem : cart.filter(item => item.selected)
+  const subtotal = itemsSubtotal(items)
+
   const [address, setAddress] = useState(initialAddress)
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [shipping, setShipping] = useState('standard')
@@ -20,53 +29,78 @@ export default function CheckoutPage() {
   const [smsConsent, setSmsConsent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const submitLock = useRef(false)
+  const addressCard = useRef(null)
   const navigate = useNavigate()
-  const standardFee = subtotal >= 1000000 ? 0 : 30000
-  const shippingCost = shipping === 'express' ? 55000 : standardFee
+  const standardFee = standardShippingFee(subtotal)
+  const shippingCost = shipping === 'express' ? EXPRESS_FEE : standardFee
   const total = subtotal + shippingCost
 
-  if (!items.length) return <section className="empty-state"><div className="empty-icon"><PackageCheck size={26} /></div><p className="eyebrow">CHƯA CÓ SẢN PHẨM</p><h1>GIỎ HÀNG ĐANG TRỐNG.</h1><p>Thêm sản phẩm vào giỏ trước khi thanh toán.</p><Link className="button button-black" to="/">QUAY LẠI CỬA HÀNG <ArrowRight size={16} /></Link></section>
+  if (!items.length) return <section className="empty-state">
+    <div className="empty-icon"><PackageCheck size={26} /></div>
+    <p className="eyebrow">THANH TOÁN</p><h1>CHƯA CÓ SẢN PHẨM ĐƯỢC CHỌN</h1>
+    <p>Chọn sản phẩm và size để tiếp tục thanh toán.</p>
+    <Link className="button button-black" to={cart.length ? '/gio-hang' : '/san-pham'}>{cart.length ? 'QUAY LẠI GIỎ HÀNG' : 'KHÁM PHÁ SẢN PHẨM'} <ArrowRight size={16} /></Link>
+  </section>
 
-  const submitOrder = async (event) => {
+  async function submitOrder(event) {
     event.preventDefault()
+    if (submitLock.current) return
     const required = ['fullName', 'phone', 'city', 'district', 'ward', 'street']
-    if (required.some((key) => !address[key].trim())) {
+    if (required.some(key => !address[key].trim())) {
       setShowAddressForm(true)
       setError('Vui lòng điền đầy đủ thông tin địa chỉ giao hàng.')
-      window.scrollTo({ top: 360, behavior: 'smooth' })
+      addressCard.current?.scrollIntoView({ block: 'start' })
       return
     }
-    if (submitLock.current) return
     submitLock.current = true
     setSubmitting(true)
     setError('')
+    const lines = items.map(({ id, size, quantity }) => ({ id, size, quantity }))
+    const purchasedCartItems = directPurchase ? [] : lines
     try {
-      const order = await createOrder({
-        items: items.map(({ id, size, quantity }) => ({ id, size, quantity })),
-        address, email, smsConsent, payment, shipping,
-      })
-      if (order.payment === 'cod') { clearCart(); sessionStorage.removeItem('fourthfish-checkout-attempt') }
+      const order = await createOrder({ items: lines, address, email, smsConsent, payment, shipping }, purchasedCartItems)
+      if (order.payment === 'cod') {
+        completeCartOrder(order.code, order.cartItems)
+        clearCheckoutAttempt(order.token)
+      }
       navigate(order.payment === 'cod' ? '/dat-hang-thanh-cong' : '/thanh-toan/chuyen-khoan')
-    } catch (error) { setError(error.message) }
-    finally { submitLock.current = false; setSubmitting(false) }
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      submitLock.current = false
+      setSubmitting(false)
+    }
   }
 
   return <div className="page-shell checkout-page">
-    <div className="breadcrumb"><Link to="/">TRANG CHỦ</Link><span>/</span><Link to="/gio-hang">GIỎ HÀNG</Link><span>/</span><span>THANH TOÁN</span></div>
-    <div className="page-title-row"><div><p className="eyebrow">MỘT BƯỚC NỮA LÀ SẴN SÀNG</p><h1>THANH TOÁN</h1></div><Link className="back-link" to="/gio-hang"><ArrowLeft size={15} /> QUAY LẠI GIỎ</Link></div>
-    <form className={`checkout-layout ${submitting ? 'is-submitting' : ''}`} onSubmit={submitOrder}>
-      <div className="checkout-main">
-        <section className="checkout-section"><label className="form-field"><span>Email nhận xác nhận đơn hàng *</span><input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="ban@example.com" /></label><label className="sms-consent"><input type="checkbox" checked={smsConsent} onChange={(event) => setSmsConsent(event.target.checked)} /> Nhận thêm SMS cập nhật đơn hàng</label></section>
-        <AddressSection address={address} setAddress={setAddress} showAddressForm={showAddressForm} setShowAddressForm={setShowAddressForm} />
+    <nav className="breadcrumb" aria-label="Đường dẫn"><Link to="/">TRANG CHỦ</Link><span>/</span><Link to="/gio-hang">GIỎ HÀNG</Link><span>/</span><span>THANH TOÁN</span></nav>
+    <div className="page-title-row">
+      <div><p className="eyebrow">FOURTHFISH CHECKOUT</p><h1>THANH TOÁN</h1><p className="checkout-intro">Điền thông tin nhận hàng và kiểm tra đơn trước khi đặt.</p></div>
+      <Link className="back-link" to="/gio-hang"><ArrowLeft size={15} /> QUAY LẠI GIỎ</Link>
+    </div>
+    <form className="checkout-layout" onSubmit={submitOrder}>
+      <fieldset className="checkout-main" disabled={submitting}>
+        <legend className="sr-only">Thông tin giao hàng và thanh toán</legend>
+        <section className="checkout-section">
+          <div className="checkout-section-heading"><span className="step-number">01</span><div><h2>Thông tin liên hệ</h2><p>Nhận xác nhận và cập nhật về đơn hàng.</p></div><Mail size={20} /></div>
+          <label className="form-field"><span>Email xác nhận đơn hàng *</span><input type="email" required value={email} onChange={event => setEmail(event.target.value)} placeholder="ban@example.com" autoComplete="email" /></label>
+          <label className="sms-consent"><input type="checkbox" checked={smsConsent} onChange={event => setSmsConsent(event.target.checked)} /> Nhận thêm SMS cập nhật đơn hàng</label>
+        </section>
+        <div ref={addressCard} className="checkout-address-anchor"><AddressSection address={address} setAddress={setAddress} showAddressForm={showAddressForm} setShowAddressForm={setShowAddressForm} /></div>
         <ShippingOptions shipping={shipping} setShipping={setShipping} standardFee={standardFee} />
         <PaymentOptions payment={payment} setPayment={setPayment} />
-      </div>
-      <aside className="checkout-review"><div className="review-heading"><div><p className="eyebrow">KIỂM TRA LẦN CUỐI</p><h2>ĐƠN HÀNG CỦA BẠN</h2></div><span>{items.reduce((sum, item) => sum + item.quantity, 0)} MÓN</span></div>
-        <div className="review-items">{items.map((item) => <CartItem key={`${item.id}-${item.size}`} item={item} setQuantity={setQuantity} removeItem={removeItem} compact />)}</div>
-        <div className="review-calculations"><div><span>Tạm tính</span><b>{formatPrice(subtotal)}</b></div><div><span>Vận chuyển · {shipping === 'express' ? 'Hỏa tốc' : 'Nhanh'}</span><b>{shippingCost === 0 ? 'MIỄN PHÍ' : formatPrice(shippingCost)}</b></div><div className="review-total"><span>TỔNG CỘNG</span><b>{formatPrice(total)}</b></div></div>
+      </fieldset>
+      <aside className="checkout-review" aria-label="Tóm tắt đơn hàng">
+        <div className="review-heading"><div><p className="eyebrow">KIỂM TRA LẦN CUỐI</p><h2>Đơn hàng của bạn</h2></div><span>{itemCount(items)} sản phẩm</span></div>
+        <div className="review-items">{items.map(item => <CartItem key={cartItemKey(item)} item={item} setQuantity={directPurchase || submitting ? undefined : setQuantity} compact />)}</div>
+        <div className="review-calculations">
+          <div><span>Tạm tính</span><b>{formatPrice(subtotal)}</b></div>
+          <div><span>Giao {shipping === 'express' ? 'hỏa tốc' : 'nhanh'}</span><b>{shippingCost ? formatPrice(shippingCost) : 'Miễn phí'}</b></div>
+          <div className="review-total"><span>Tổng thanh toán</span><b>{formatPrice(total)}</b></div>
+        </div>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button type="submit" disabled={submitting} className="button button-black summary-cta">{submitting ? 'ĐANG TẠO ĐƠN...' : payment === 'vietqr' ? 'TIẾP TỤC THANH TOÁN' : 'ĐẶT HÀNG'} <ArrowRight size={17} /></button>
-        <p className="terms-copy">Bằng việc đặt hàng, bạn đồng ý với <a href="#terms">Điều khoản mua hàng</a> và <a href="#privacy">Chính sách bảo mật</a> của Fourthfish.</p>
+        <p className="terms-copy">{payment === 'cod' ? 'Bạn sẽ thanh toán khi nhận hàng.' : 'Bạn sẽ nhận mã VietQR để chuyển khoản ở bước tiếp theo.'}</p>
       </aside>
     </form>
   </div>
