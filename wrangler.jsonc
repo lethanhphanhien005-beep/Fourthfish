@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "fourthfish-production",
+  "name": "fourthfish",
   "main": "cloudflare/worker.js",
   "compatibility_date": "2026-11-07",
   "compatibility_flags": ["nodejs_compat"],
