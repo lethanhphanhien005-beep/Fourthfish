@@ -15,7 +15,7 @@
   "d1_databases": [{
     "binding": "DB",
     "database_name": "fourthfish-production",
-    "database_id": "REPLACE_WITH_YOUR_PRODUCTION_D1_ID",
+    "database_id": "c743737f-3777-4ce8-ab70-d00f8e129b8d",
     "migrations_dir": "cloudflare/migrations"
   }],
   "ratelimits": [{
