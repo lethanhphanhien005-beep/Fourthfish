@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router'
 
 export default function CampaignHero() {
@@ -11,7 +11,7 @@ export default function CampaignHero() {
         <p className="eyebrow light">MOVE YOUR OWN WAY</p>
         <h1><span>CHẠY THEO</span><em>NHỊP CỦA BẠN.</em></h1>
         <p className="hero-copy">Trang phục nhẹ và thoáng, đồng hành cùng bạn trên mỗi cung đường.</p>
-        <div className="hero-actions"><Link className="button button-white" to="/#featured">MUA BỘ SƯU TẬP <ArrowUpRight size={17} /></Link><a href="#sports" className="text-link-light">KHÁM PHÁ MÔN THỂ THAO <span>↘</span></a></div>
+        <div className="hero-actions"><Link className="button button-white" to="/#featured">MUA BỘ SƯU TẬP <ArrowUpRight size={17} /></Link><a href="#sports" className="text-link-light">KHÁM PHÁ MÔN THỂ THAO <ArrowDownRight className="inline-block ml-1" size={15} aria-hidden="true" /></a></div>
       </div>
       <div className="hero-meta"><span>01 / RUNNING SERIES</span><span>BUILT FOR THE LONG RUN</span><a href="#featured" aria-label="Cuộn xuống sản phẩm nổi bật"><ArrowDown size={19} /></a></div>
     </section>
