@@ -375,3 +375,64 @@ button { color: inherit; }
 .payment-panel > img { background: white; border: 1px solid #ddd; }
 .payment-panel > p { font-size: 12px; line-height: 1.7; }
 .is-submitting .checkout-main, .is-submitting .review-items { pointer-events: none; opacity: .65; }
+
+/* Vietnamese headings need room for accents above and below each line. */
+:root { font-family: 'Inter Variable', 'Arial', sans-serif; }
+body { min-width: 320px; }
+#featured, #sports { scroll-margin-top: 86px; }
+.site-header .bag-button { gap: 8px; min-height: 44px; padding: 8px; }
+.bag-label { font-size: 10px; font-weight: 750; white-space: nowrap; }
+.bag-button .bag-count { position: static; border-radius: 20px; }
+.campaign-hero { display: grid; grid-template-rows: auto 1fr auto; height: auto; min-height: clamp(530px, 79svh, 740px); padding: 28px clamp(20px, 5.2vw, 86px) 22px; }
+.hero-topline, .hero-meta { position: relative; inset: auto; gap: 14px; }
+.hero-content { position: relative; inset: auto; align-self: center; transform: none; width: min(100%, 920px); padding: 24px 0; }
+.hero-content h1, .manifesto h2, .section-heading h2, .page-title-row h1, .empty-state h1, .success-page h1 { line-height: 1.15; letter-spacing: -.043em; }
+.hero-content h1 { font-size: clamp(38px, 6.2vw, 94px); }
+.hero-content h1 > span, .hero-content h1 > em { display: block; }
+.hero-content h1 em { font-weight: 500; }
+.hero-copy { max-width: 440px; color: #f2f2f2; font-size: 14px; }
+.sport-label h3 { line-height: 1.18; letter-spacing: -.035em; }
+.hero-actions { flex-wrap: wrap; }
+.product-image-link { display: block; width: 100%; height: 100%; }
+.product-card h3 a:hover, .cart-item h3 a:hover { text-decoration: underline; }
+.product-badge { pointer-events: none; }
+.product-photo-placeholder { width: 100%; height: 100%; min-height: 70px; display: grid; align-content: center; justify-items: center; gap: 8px; background: #eaeae8; color: #62625f; font-size: 12px; text-align: center; }
+.product-view { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); align-items: start; gap: clamp(28px,6vw,88px); }
+.product-view-photo { position: relative; aspect-ratio: 4/5; overflow: hidden; background: #eee; }
+.product-view-photo img { width: 100%; height: 100%; object-fit: cover; }
+.product-view-info { padding: clamp(0px,3vw,45px) 0; }
+.product-view h1 { margin: 0 0 13px; font-size: clamp(32px,5vw,64px); font-weight: 850; line-height: 1.12; letter-spacing: -.045em; }
+.product-view-price { margin: 0; font-size: 20px; font-weight: 700; }
+.product-description { margin: 20px 0 24px; color: #555; font-size: 15px; line-height: 1.7; }
+.size-picker { margin: 0 0 24px; padding: 0; border: 0; }
+.size-picker legend { margin: 0 0 9px; font-size: 13px; font-weight: 700; }
+.size-options { display: flex; flex-wrap: wrap; gap: 7px; }
+.size-options label { position: relative; cursor: pointer; }
+.size-options input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.size-options span { display: grid; place-items: center; width: 45px; height: 45px; border: 1px solid #ccc; font-size: 12px; font-weight: 700; }
+.size-options input:checked + span { background: #111; color: #fff; border-color: #111; }
+.size-options input:focus-visible + span { outline: 2px solid #555; outline-offset: 2px; }
+.product-view-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 23px; }
+.button-outline { background: transparent; border-color: #111; }
+.button-outline:hover { background: #e8e8e6; }
+.cart-item-photo { display: block; width: 100%; aspect-ratio: 5/6; overflow: hidden; background: #e8e8e5; }
+.cart-item-photo img { width: 100%; height: 100%; object-fit: cover; }
+.form-field input { font-size: 14px; }
+.form-field span, .check-row, .option-copy b { font-size: 12px; }
+.option-copy > span, .terms-copy { font-size: 11px; }
+@media (max-width: 640px) {
+  .campaign-hero { min-height: 510px; }
+  .hero-content h1 { font-size: clamp(32px, 8.7vw, 54px); }
+  .hero-copy { font-size: 13px; }
+  .hero-meta > span:nth-child(2) { display: none; }
+  .announcement { height: auto; min-height: 26px; padding: 6px 12px; text-align: center; }
+  .bag-label { display: none; }
+  .bag-button .bag-count { position: absolute; right: -3px; top: 2px; }
+  .product-view { grid-template-columns: 1fr; }
+  .product-view-photo { aspect-ratio: 1/1; }
+  .product-heading { flex-direction: column; align-items: flex-start; }
+  .product-details { flex-wrap: wrap; }
+  .product-details h3 { font-size: 13px; }
+  .product-price { font-size: 12px; }
+  .form-field input { font-size: 16px; }
+}

@@ -6,10 +6,19 @@ import HomePage from '../pages/HomePage.jsx'
 import CartPage from '../pages/CartPage.jsx'
 import CheckoutPage from '../pages/CheckoutPage.jsx'
 import OrderSuccessPage from '../pages/OrderSuccessPage.jsx'
+import ProductPage, { NotFoundPage } from '../pages/ProductPage.jsx'
 
 function ScrollToTop() {
-  const { pathname } = useLocation()
-  useEffect(() => window.scrollTo({ top: 0, behavior: 'smooth' }), [pathname])
+  const { pathname, hash, key } = useLocation()
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const anchor = hash && document.getElementById(hash.slice(1))
+      if (anchor) anchor.scrollIntoView({ block: 'start' })
+      else window.scrollTo({ top: 0, behavior: 'instant' })
+    })
+    // An effect cleanup must be a function, even if the browser returns a scroll promise.
+    return () => window.cancelAnimationFrame(frame)
+  }, [pathname, hash, key])
   return null
 }
 
@@ -20,11 +29,12 @@ export default function App() {
       <Routes>
         <Route element={<StoreLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/san-pham/:id" element={<ProductPage />} />
           <Route path="/gio-hang" element={<CartPage />} />
           <Route path="/thanh-toan" element={<CheckoutPage />} />
           <Route path="/thanh-toan/chuyen-khoan" element={<OrderSuccessPage />} />
           <Route path="/dat-hang-thanh-cong" element={<OrderSuccessPage />} />
-          <Route path="*" element={<HomePage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </StoreProvider>

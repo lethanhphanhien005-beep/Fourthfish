@@ -1,4 +1,4 @@
-import { Menu, Search, ShoppingBag, UserRound } from 'lucide-react'
+import { Menu, ShoppingBag } from 'lucide-react'
 import { Link, NavLink } from 'react-router'
 import { useState } from 'react'
 import { useStore } from '../../features/cart/CartContext.jsx'
@@ -15,15 +15,13 @@ export default function Header() {
           <Link to="/" className="wordmark" aria-label="Fourthfish trang chủ">FOURTH<span>FISH</span><i>®</i></Link>
           <nav className="desktop-nav" aria-label="Điều hướng chính">
             <NavLink to="/">MỚI NHẤT</NavLink>
-            <a href="#featured">NAM</a><a href="#featured">NỮ</a><a href="#sports">MÔN THỂ THAO</a>
+            <Link to="/#featured">SẢN PHẨM</Link><Link to="/#sports">MÔN THỂ THAO</Link>
           </nav>
           <div className="header-actions">
-            <button className="icon-button search-button" aria-label="Tìm kiếm"><Search size={20} /></button>
-            <button className="icon-button account-button" aria-label="Tài khoản"><UserRound size={20} /></button>
-            <Link to="/gio-hang" className="icon-button bag-button" aria-label={`Giỏ hàng, ${count} sản phẩm`}><ShoppingBag size={20} /><span className="bag-count">{count}</span></Link>
+            <Link to="/gio-hang" className="icon-button bag-button" aria-label={`Giỏ hàng, ${count} sản phẩm`}><ShoppingBag size={20} /><span className="bag-label">GIỎ HÀNG</span><span className="bag-count">{count}</span></Link>
           </div>
         </div>
-        {menuOpen && <nav className="mobile-nav"><a href="#featured" onClick={() => setMenuOpen(false)}>Mua sắm sản phẩm</a><a href="#sports" onClick={() => setMenuOpen(false)}>Môn thể thao</a><Link to="/gio-hang" onClick={() => setMenuOpen(false)}>Giỏ hàng ({count})</Link></nav>}
+        {menuOpen && <nav className="mobile-nav"><Link to="/#featured" onClick={() => setMenuOpen(false)}>Mua sắm sản phẩm</Link><Link to="/#sports" onClick={() => setMenuOpen(false)}>Môn thể thao</Link><Link to="/gio-hang" onClick={() => setMenuOpen(false)}>Giỏ hàng ({count})</Link></nav>}
       </header>
     </>
   )

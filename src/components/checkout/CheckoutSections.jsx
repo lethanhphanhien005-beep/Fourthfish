@@ -3,18 +3,18 @@ import { formatPrice } from '../../features/products/productData.js'
 import AddressForm from './AddressForm.jsx'
 
 export function AddressSection({ address, setAddress, showAddressForm, setShowAddressForm }) {
-  const saved = address.fullName && address.phone && address.street
+  const saved = ['fullName', 'phone', 'city', 'district', 'ward', 'street'].every(key => address[key].trim())
   return <section className="checkout-section"><div className="checkout-section-heading"><span className="step-number">01</span><div><p className="eyebrow">GIAO ĐẾN ĐÂU?</p><h2>ĐỊA CHỈ GIAO HÀNG</h2></div><MapPin size={18} /></div>
-    {saved && !showAddressForm && <div className="saved-address"><div className="saved-address-top"><div><b>{address.fullName}</b><span>{address.phone}</span></div><span className="default-tag">{address.type.toUpperCase()}</span></div><p>{address.street}, {address.ward}, {address.district}, {address.city}</p>{address.note && <p className="saved-note">Ghi chú: {address.note}</p>}<button className="edit-address" onClick={() => setShowAddressForm(true)}>SỬA ĐỊA CHỈ</button></div>}
+    {saved && !showAddressForm && <div className="saved-address"><div className="saved-address-top"><div><b>{address.fullName}</b><span>{address.phone}</span></div><span className="default-tag">{address.type.toUpperCase()}</span></div><p>{address.street}, {address.ward}, {address.district}, {address.city}</p>{address.note && <p className="saved-note">Ghi chú: {address.note}</p>}<button type="button" className="edit-address" onClick={() => setShowAddressForm(true)}>SỬA ĐỊA CHỈ</button></div>}
     {!saved && !showAddressForm && <div className="add-address-card"><p>Thêm địa chỉ nhận hàng để tiếp tục đặt mua.</p><button className="button button-black" type="button" onClick={() => setShowAddressForm(true)}>THÊM ĐỊA CHỈ <MapPin size={15} /></button></div>}
-    {showAddressForm && <><AddressForm address={address} setAddress={setAddress} /><button className="save-address" type="button" onClick={() => setShowAddressForm(false)}>LƯU ĐỊA CHỈ <Check size={15} /></button></>}
+    {showAddressForm && <><AddressForm address={address} setAddress={setAddress} /><button className="save-address" type="button" disabled={!saved} onClick={() => setShowAddressForm(false)}>LƯU ĐỊA CHỈ <Check size={15} /></button></>}
     {!saved && <p className="section-hint">Nhập địa chỉ để xem các phương thức giao hàng khả dụng.</p>}
   </section>
 }
 
-export function ShippingOptions({ shipping, setShipping }) {
+export function ShippingOptions({ shipping, setShipping, standardFee }) {
   return <section className="checkout-section"><div className="checkout-section-heading"><span className="step-number">02</span><div><p className="eyebrow">CHỌN TỐC ĐỘ GIAO</p><h2>VẬN CHUYỂN</h2></div><Truck size={18} /></div>
-    <div className="option-list"><label className={`choice-option ${shipping === 'standard' ? 'selected' : ''}`}><input type="radio" name="shipping" checked={shipping === 'standard'} onChange={() => setShipping('standard')} /><span className="radio-dot" /><div className="option-copy"><b>Giao nhanh</b><span>Dự kiến 2–4 ngày làm việc</span></div><strong>30.000₫</strong></label><label className={`choice-option ${shipping === 'express' ? 'selected' : ''}`}><input type="radio" name="shipping" checked={shipping === 'express'} onChange={() => setShipping('express')} /><span className="radio-dot" /><div className="option-copy"><b>Hỏa tốc</b><span>Nhận trong ngày tại khu vực hỗ trợ</span></div><strong>55.000₫</strong></label></div>
+    <div className="option-list"><label className={`choice-option ${shipping === 'standard' ? 'selected' : ''}`}><input type="radio" name="shipping" checked={shipping === 'standard'} onChange={() => setShipping('standard')} /><span className="radio-dot" /><div className="option-copy"><b>Giao nhanh</b><span>Dự kiến 2–4 ngày làm việc</span></div><strong>{standardFee === 0 ? 'Miễn phí' : formatPrice(standardFee)}</strong></label><label className={`choice-option ${shipping === 'express' ? 'selected' : ''}`}><input type="radio" name="shipping" checked={shipping === 'express'} onChange={() => setShipping('express')} /><span className="radio-dot" /><div className="option-copy"><b>Hỏa tốc</b><span>Nhận trong ngày tại khu vực hỗ trợ</span></div><strong>55.000₫</strong></label></div>
   </section>
 }
 

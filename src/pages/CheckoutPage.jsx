@@ -21,7 +21,8 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false)
   const submitLock = useRef(false)
   const navigate = useNavigate()
-  const shippingCost = shipping === 'express' ? 55000 : subtotal >= 1000000 ? 0 : 30000
+  const standardFee = subtotal >= 1000000 ? 0 : 30000
+  const shippingCost = shipping === 'express' ? 55000 : standardFee
   const total = subtotal + shippingCost
 
   if (!items.length) return <section className="empty-state"><div className="empty-icon"><PackageCheck size={26} /></div><p className="eyebrow">CHƯA CÓ SẢN PHẨM</p><h1>GIỎ HÀNG ĐANG TRỐNG.</h1><p>Thêm sản phẩm vào giỏ trước khi thanh toán.</p><Link className="button button-black" to="/">QUAY LẠI CỬA HÀNG <ArrowRight size={16} /></Link></section>
@@ -57,7 +58,7 @@ export default function CheckoutPage() {
       <div className="checkout-main">
         <section className="checkout-section"><label className="form-field"><span>Email nhận xác nhận đơn hàng *</span><input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="ban@example.com" /></label><label className="sms-consent"><input type="checkbox" checked={smsConsent} onChange={(event) => setSmsConsent(event.target.checked)} /> Nhận thêm SMS cập nhật đơn hàng</label></section>
         <AddressSection address={address} setAddress={setAddress} showAddressForm={showAddressForm} setShowAddressForm={setShowAddressForm} />
-        <ShippingOptions shipping={shipping} setShipping={setShipping} />
+        <ShippingOptions shipping={shipping} setShipping={setShipping} standardFee={standardFee} />
         <PaymentOptions payment={payment} setPayment={setPayment} />
       </div>
       <aside className="checkout-review"><div className="review-heading"><div><p className="eyebrow">KIỂM TRA LẦN CUỐI</p><h2>ĐƠN HÀNG CỦA BẠN</h2></div><span>{items.reduce((sum, item) => sum + item.quantity, 0)} MÓN</span></div>
