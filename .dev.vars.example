@@ -1,0 +1,12 @@
+# LOCAL Cloudflare emulator ONLY; do not put production keys here.
+APP_ORIGIN=http://localhost:8787
+STORE_ENABLED=false
+NOTIFICATIONS_ENABLED=false
+PAYOS_CLIENT_ID=
+PAYOS_API_KEY=
+PAYOS_CHECKSUM_KEY=
+RESEND_API_KEY=
+EMAIL_FROM=Fourthfish <orders@your-domain.vn>
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_FROM=

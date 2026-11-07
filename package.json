@@ -1,0 +1,38 @@
+{
+  "name": "fourthfish-cloudflare-production",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev:api": "node --env-file-if-exists=.env server/index.js",
+    "test:backend": "node --test server/domain.test.js",
+    "cf:check": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "cf:dev": "wrangler dev",
+    "cf:migrate:local": "wrangler d1 migrations apply DB --local",
+    "cf:migrate:production": "wrangler d1 migrations apply DB --remote",
+    "cf:deploy": "wrangler deploy",
+    "cf:release": "npm run cf:migrate:production && npm run cf:deploy",
+    "test:cloudflare": "node --test cloudflare/worker.test.js"
+  },
+  "dependencies": {
+    "@payos/node": "^2.0.5",
+    "@tailwindcss/vite": "latest",
+    "@vitejs/plugin-react": "latest",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
+    "helmet": "^8.3.0",
+    "lucide-react": "latest",
+    "qrcode": "^1.5.4",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router": "latest",
+    "tailwindcss": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "wrangler": "^4.158.0"
+  }
+}
