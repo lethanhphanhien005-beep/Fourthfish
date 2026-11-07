@@ -24,7 +24,7 @@
     "simple": { "limit": 30, "period": 60 }
   }],
   "vars": {
-    "APP_ORIGIN": "https://REPLACE-WITH-YOUR-PRODUCTION-URL.workers.dev",
+    "APP_ORIGIN": "https://fourthfish.lethanhphanhien005.workers.dev",
     "STORE_ENABLED": "false",
     "NOTIFICATIONS_ENABLED": "false",
     "EMAIL_FROM": "Fourthfish <orders@your-domain.vn>"
